@@ -6,11 +6,14 @@ interface SelectEmployeeProps {
     options: [{
         value: string, label: string
     }]
+    className?: string
 }
 
-const SelectEmployee: React.FC<SelectEmployeeProps> = ({options}) => {
+const SelectEmployee: React.FC<SelectEmployeeProps> = ({options, className}) => {
+    console.log(options, 'options')
+    console.log(className, 'className')
     return (
-        <div className="select">
+        <div className={className}>
             <Select
                 defaultValue={options[0]}
                 options={options}

@@ -5,6 +5,7 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import './index.css'
 import SelectEmployee from "../../Select";
+import { states } from "../../../utils/states";
 
 interface HomeProps {}
 
@@ -24,6 +25,15 @@ const Home: React.FC<HomeProps> = () => {
     { value: 'Human Resources', label: 'Human Resources' },
     { value: 'Legal', label: 'Legal' },
   ];
+
+  const newStates = states.map((state) => {
+    return {
+      label: state.name,
+      value: state.abbreviation
+    }
+    
+  })
+  console.log(newStates, 'newStates')
 
   return (
     <>
@@ -62,6 +72,9 @@ const Home: React.FC<HomeProps> = () => {
                 selected={value}
                 onChange={(date) => onChange(date)} 
                 dateFormat="dd/MM/yyyy"
+                showMonthDropdown
+                showYearDropdown
+                dropdownMode="select"
               />
             )}
           />
@@ -76,6 +89,9 @@ const Home: React.FC<HomeProps> = () => {
                 selected={value}
                 onChange={(date) => onChange(date)} 
                 dateFormat="dd/MM/yyyy"
+                showMonthDropdown
+                showYearDropdown
+                dropdownMode="select"
               />
             )}
           />
@@ -98,11 +114,18 @@ const Home: React.FC<HomeProps> = () => {
             />
 
             <label htmlFor="state">State</label>
-            <select
-              id="state" 
-              {...register("state", { required: true })} 
-            >
-            </select>
+            <Controller
+              control={control}
+              name="state"
+              defaultValue={null}
+              render={({ field: { onChange, value } }) => (
+                <SelectEmployee 
+                  options={newStates} 
+                  value={value} 
+                  onChange={onChange} 
+                />
+              )}
+            />
 
             <label htmlFor="zip-code">Zip Code</label>
             <input 
@@ -122,6 +145,7 @@ const Home: React.FC<HomeProps> = () => {
                 options={options} 
                 value={value} 
                 onChange={onChange} 
+                className="select-department"
               />
             )}
           />
