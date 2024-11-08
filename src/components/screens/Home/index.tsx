@@ -6,15 +6,19 @@ import "react-datepicker/dist/react-datepicker.css";
 import './index.css'
 import SelectEmployee from "../../Select";
 import { states } from "../../../utils/states";
+import { useSelector } from "react-redux";
+import { setEmployee } from "../../../store/employeeSlice";
 
 interface HomeProps {}
 
 const Home: React.FC<HomeProps> = () => {
   const { register, handleSubmit, control } = useForm();
   const [employeeCreated, setEmployeeCreated] = useState(false);
+  const employee = useSelector((state) => state?.employees);
 
   const submitHandler = (data) => {
     console.log(data);
+    setEmployee(data)
     setEmployeeCreated(true);
   };
 
@@ -33,7 +37,7 @@ const Home: React.FC<HomeProps> = () => {
     }
     
   })
-  console.log(newStates, 'newStates')
+  console.log(employee, 'employee')
 
   return (
     <>
