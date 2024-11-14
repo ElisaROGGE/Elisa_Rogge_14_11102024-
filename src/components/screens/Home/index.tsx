@@ -6,21 +6,28 @@ import "react-datepicker/dist/react-datepicker.css";
 import './index.css'
 import SelectEmployee from "../../Select";
 import { states } from "../../../utils/states";
-import { useSelector } from "react-redux";
-import { setEmployee } from "../../../store/employeeSlice";
+import { useDispatch } from "react-redux";
+import { Employee, setEmployee } from "../../../store/employeeSlice";
 
 interface HomeProps {}
 
 const Home: React.FC<HomeProps> = () => {
   const { register, handleSubmit, control } = useForm();
   const [employeeCreated, setEmployeeCreated] = useState(false);
-  const employee = useSelector((state) => state?.employees);
+  const dispatch = useDispatch();
 
-  const submitHandler = (data) => {
-    console.log(data);
-    setEmployee(data)
+  const submitHandler = (data: Employee) => {
+    console.log(data, 'submit')
+    const formattedData = {
+      ...data,
+      dateOfBirth: data.dateOfBirth.toLocaleDateString("fr-FR"),
+      startDate: data.startDate.toLocaleDateString("fr-FR"),
+    };
+  
+    dispatch(setEmployee(formattedData));
     setEmployeeCreated(true);
   };
+  
 
   const options = [
     { value: 'Sales', label: 'Sales' },
@@ -37,7 +44,6 @@ const Home: React.FC<HomeProps> = () => {
     }
     
   })
-  console.log(employee, 'employee')
 
   return (
     <>
@@ -121,12 +127,12 @@ const Home: React.FC<HomeProps> = () => {
             <Controller
               control={control}
               name="state"
-              defaultValue={null}
+              defaultValue={newStates[0].value}
               render={({ field: { onChange, value } }) => (
                 <SelectEmployee 
                   options={newStates} 
                   value={value} 
-                  onChange={onChange} 
+                  onChange={(selectedOption) => onChange(selectedOption ? selectedOption.value : null)}
                 />
               )}
             />
@@ -143,12 +149,12 @@ const Home: React.FC<HomeProps> = () => {
           <Controller
             control={control}
             name="department"
-            defaultValue={null}
+            defaultValue={options[0].value}
             render={({ field: { onChange, value } }) => (
               <SelectEmployee 
                 options={options} 
                 value={value} 
-                onChange={onChange} 
+                onChange={(selectedOption) => onChange(selectedOption ? selectedOption.value : null)}
                 className="select-department"
               />
             )}
