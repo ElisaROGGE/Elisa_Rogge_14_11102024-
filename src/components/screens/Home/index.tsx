@@ -17,15 +17,19 @@ const Home: React.FC<HomeProps> = () => {
   const dispatch = useDispatch();
 
   const submitHandler = (data: Employee) => {
-    console.log(data, 'submit')
-    const formattedData = {
-      ...data,
-      dateOfBirth: data.dateOfBirth.toLocaleDateString("fr-FR"),
-      startDate: data.startDate.toLocaleDateString("fr-FR"),
-    };
-  
-    dispatch(setEmployee(formattedData));
-    setEmployeeCreated(true);
+    try{
+      const formattedData = {
+        ...data,
+        dateOfBirth: data.dateOfBirth.toLocaleDateString("fr-FR"),
+        startDate: data.startDate.toLocaleDateString("fr-FR"),
+      };
+    
+      dispatch(setEmployee(formattedData));
+      setEmployeeCreated(true);
+    }
+    catch(error){
+      console.log(error)
+    }
   };
   
 

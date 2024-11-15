@@ -38,6 +38,10 @@ input, select {
     font-size: 1rem;
 }
 
+.react-datepicker-wrapper{
+    width: 100%;
+}
+
 input:focus, select:focus {
     border-color: #007BFF;
     outline: none;
