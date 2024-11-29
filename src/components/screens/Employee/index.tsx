@@ -1,21 +1,29 @@
-import { flexRender, getCoreRowModel, getPaginationRowModel, getSortedRowModel, PaginationState, SortingState, useReactTable } from "@tanstack/react-table";
+import {
+  flexRender,
+  getCoreRowModel,
+  getPaginationRowModel,
+  getSortedRowModel,
+  PaginationState,
+  SortingState,
+  useReactTable,
+} from "@tanstack/react-table";
 import React, { useEffect } from "react";
 import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
-import './table.css'
+import "./table.css";
 
 interface EmployeeProps {}
 
 const EmployeeList: React.FC<EmployeeProps> = () => {
   const data = useSelector((state) => state?.employees);
-  const [sorting, setSorting] = React.useState<SortingState>([])
+  const [sorting, setSorting] = React.useState<SortingState>([]);
   const [pagination, setPagination] = React.useState<PaginationState>({
     pageIndex: 0,
     pageSize: 10,
-  })
-  const [searchQuery, setSearchQuery] = React.useState('');
+  });
+  const [searchQuery, setSearchQuery] = React.useState("");
   const [filteredData, setFilteredData] = React.useState(data);
-
+  const [errorMessage, setErrorMessage] = React.useState("No data available")
 
   useEffect(() => {
     setFilteredData(
@@ -25,8 +33,14 @@ const EmployeeList: React.FC<EmployeeProps> = () => {
         )
       )
     );
+    if(searchQuery !== "" && filteredData.length === 0){
+      setErrorMessage("No matching records found")
+    }
+    else{
+      setErrorMessage("No data available")
+    }
   }, [data, searchQuery]);
-  
+
   const columns = [
     { header: "First Name", accessorKey: "firstName" },
     { header: "Last Name", accessorKey: "lastName" },
@@ -49,7 +63,7 @@ const EmployeeList: React.FC<EmployeeProps> = () => {
     onPaginationChange: setPagination,
     state: {
       sorting,
-      pagination
+      pagination,
     },
   });
 
@@ -59,11 +73,11 @@ const EmployeeList: React.FC<EmployeeProps> = () => {
       <div className="page-filter">
         <select
           value={table.getState().pagination.pageSize}
-          onChange={e => {
-            table.setPageSize(Number(e.target.value))
+          onChange={(e) => {
+            table.setPageSize(Number(e.target.value));
           }}
         >
-          {[10, 25, 50, 100].map(pageSize => (
+          {[10, 25, 50, 100].map((pageSize) => (
             <option key={pageSize} value={pageSize}>
               Show {pageSize}
             </option>
@@ -79,76 +93,83 @@ const EmployeeList: React.FC<EmployeeProps> = () => {
       </div>
       <table key={data.length} id="employee-table" className="display">
         <thead>
-          {table.getHeaderGroups().map(headerGroup => (
+          {table.getHeaderGroups().map((headerGroup) => (
             <tr key={headerGroup.id}>
-              {headerGroup.headers.map(header => (
+              {headerGroup.headers.map((header) => (
                 <th key={header.id} colSpan={header.colSpan}>
-                {header.isPlaceholder ? null : (
-                  <div
-                    className={
-                      header.column.getCanSort()
-                        ? 'cursor-pointer select-none'
-                        : ''
-                    }
-                    onClick={header.column.getToggleSortingHandler()}
-                    title={
-                      header.column.getCanSort()
-                        ? header.column.getNextSortingOrder() === 'asc'
-                          ? 'Sort ascending'
-                          : header.column.getNextSortingOrder() === 'desc'
-                            ? 'Sort descending'
-                            : 'Clear sort'
-                        : undefined
-                    }
-                  >
-                    {flexRender(
-                      header.column.columnDef.header,
-                      header.getContext()
-                    )}
-                    {{
-                      asc: ' 🔼',
-                      desc: ' 🔽',
-                    }[header.column.getIsSorted() as string] ?? null}
-                  </div>
-                )}
-              </th>
+                  {header.isPlaceholder ? null : (
+                    <div
+                      className={
+                        header.column.getCanSort()
+                          ? "cursor-pointer select-none"
+                          : ""
+                      }
+                      onClick={header.column.getToggleSortingHandler()}
+                      title={
+                        header.column.getCanSort()
+                          ? header.column.getNextSortingOrder() === "asc"
+                            ? "Sort ascending"
+                            : header.column.getNextSortingOrder() === "desc"
+                            ? "Sort descending"
+                            : "Clear sort"
+                          : undefined
+                      }
+                    >
+                      {flexRender(
+                        header.column.columnDef.header,
+                        header.getContext()
+                      )}
+                      {{
+                        asc: " 🔼",
+                        desc: " 🔽",
+                      }[header.column.getIsSorted() as string] ?? null}
+                    </div>
+                  )}
+                </th>
               ))}
             </tr>
           ))}
         </thead>
         <tbody>
-          {table.getRowModel().rows.map(row => (
-            <tr key={row.id}>
-              {row.getVisibleCells().map(cell => (
-                <td key={cell.id}>{cell.getValue()}</td>
-              ))}
+          {table.getRowModel().rows.length > 0 ? (
+            table.getRowModel().rows.map((row) => (
+              <tr key={row.id}>
+                {row.getVisibleCells().map((cell) => (
+                  <td key={cell.id}>{cell.getValue()}</td>
+                ))}
+              </tr>
+            ))
+          ) : (
+            <tr>
+              <td colSpan="100%">{errorMessage}</td>
             </tr>
-          ))}
+          )}
         </tbody>
       </table>
-      <div className="flex items-center gap-2">
-        <button
-          className="border rounded p-1"
-          onClick={() => table.previousPage()}
-          disabled={!table.getCanPreviousPage()}
-        >
-          {'Previous'}
-        </button>
-        <button
-          className="border rounded p-1"
-          onClick={() => table.nextPage()}
-          disabled={!table.getCanNextPage()}
-        >
-          {'Next'}
-        </button>
-        <span className="flex items-center gap-1">
+      <div className="filter-bottom">
+        <span className="">
           <div>Page</div>
           <strong>
-            {table.getState().pagination.pageIndex + 1} of{' '}
+            {table.getState().pagination.pageIndex + 1} of{" "}
             {table.getPageCount().toLocaleString()}
           </strong>
         </span>
-        
+        <div>
+          <button
+            className="filter-bottom-prev-btn"
+            onClick={() => table.previousPage()}
+            disabled={!table.getCanPreviousPage()}
+          >
+            {"Previous"}
+          </button>
+          <button
+            className="filter-bottom-next-btn"
+            onClick={() => table.nextPage()}
+            disabled={!table.getCanNextPage()}
+          >
+            {"Next"}
+          </button>
+        </div>
       </div>
       <Link to="/">Home</Link>
     </div>

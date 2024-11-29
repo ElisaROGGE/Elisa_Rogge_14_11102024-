@@ -14,4 +14,10 @@
   .page-filter{
     width: 100%;
     display: flex;
+    justify-content: space-between;
+  }
+  .filter-bottom{
+    display: flex;
+    width: 100%;
+    justify-content: space-between;
   }
