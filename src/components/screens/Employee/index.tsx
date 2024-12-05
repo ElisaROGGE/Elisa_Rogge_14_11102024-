@@ -11,11 +11,12 @@ import React, { useEffect } from "react";
 import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import "./table.css";
+import { Employee } from "../../../store/employeeSlice";
 
 interface EmployeeProps {}
 
 const EmployeeList: React.FC<EmployeeProps> = () => {
-  const data = useSelector((state) => state?.employees);
+  const data = useSelector((state: { employees: Employee[] }) => state.employees);
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [pagination, setPagination] = React.useState<PaginationState>({
     pageIndex: 0,
@@ -26,20 +27,23 @@ const EmployeeList: React.FC<EmployeeProps> = () => {
   const [errorMessage, setErrorMessage] = React.useState("No data available")
 
   useEffect(() => {
-    setFilteredData(
-      data.filter((employee) =>
-        Object.values(employee).some((value) =>
-          value?.toString().toLowerCase().includes(searchQuery.toLowerCase())
-        )
+    const filtered = data.filter((employee) =>
+      Object.values(employee).some((value) =>
+        value?.toString().toLowerCase().includes(searchQuery.toLowerCase())
       )
     );
-    if(searchQuery !== "" && filteredData.length === 0){
-      setErrorMessage("No matching records found")
-    }
-    else{
-      setErrorMessage("No data available")
+  
+    setFilteredData(filtered);
+  
+    if (searchQuery !== "" && filtered.length === 0) {
+      setErrorMessage("No matching records found");
+    } else if (data.length === 0) {
+      setErrorMessage("No data available");
+    } else {
+      setErrorMessage("");
     }
   }, [data, searchQuery]);
+  
 
   const columns = [
     { header: "First Name", accessorKey: "firstName" },
@@ -135,13 +139,13 @@ const EmployeeList: React.FC<EmployeeProps> = () => {
             table.getRowModel().rows.map((row) => (
               <tr key={row.id}>
                 {row.getVisibleCells().map((cell) => (
-                  <td key={cell.id}>{cell.getValue()}</td>
+                  <td key={cell.id}>{cell.getValue() as React.ReactNode}</td>
                 ))}
               </tr>
             ))
           ) : (
             <tr>
-              <td colSpan="100%">{errorMessage}</td>
+              <td>{errorMessage}</td>
             </tr>
           )}
         </tbody>

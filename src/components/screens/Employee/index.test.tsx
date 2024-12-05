@@ -1,4 +1,4 @@
-import { render, screen, fireEvent } from "@testing-library/react";
+import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import { Provider } from "react-redux";
 import { BrowserRouter as Router } from "react-router-dom";
 import configureStore from "redux-mock-store";
@@ -72,7 +72,7 @@ describe("EmployeeList Component", () => {
     expect(screen.getByText("Jane")).toBeInTheDocument();
   });
 
-  test("displays 'No matching records found' for unmatched search queries", () => {
+  test("displays 'No matching records found' for unmatched search queries", async () => {
     render(
       <Provider store={store}>
         <Router>
@@ -84,7 +84,9 @@ describe("EmployeeList Component", () => {
     const searchInput = screen.getByPlaceholderText("Search employees...");
     fireEvent.change(searchInput, { target: { value: "Nonexistent" } });
 
-    expect(screen.getByText("No matching records found")).toBeInTheDocument();
+    await waitFor(() =>
+      expect(screen.getByText("No matching records found")).toBeInTheDocument()
+    );
   });
 
   test("handles pagination correctly", () => {
