@@ -101,3 +101,9 @@ legend {
 .modal.hidden {
     display: none;
 }
+.blur-background{
+    z-index: 0;
+    filter: blur(4px);
+    opacity: 0.6;
+    pointer-events: none;
+}

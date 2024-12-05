@@ -8,12 +8,13 @@ import SelectEmployee from "../../Select";
 import { states } from "../../../utils/states";
 import { useDispatch } from "react-redux";
 import { Employee, setEmployee } from "../../../store/employeeSlice";
+import ValidationModal from "../../Modals/ValidationModal";
 
 interface HomeProps {}
 
 const Home: React.FC<HomeProps> = () => {
   const { register, handleSubmit, control } = useForm();
-  const [employeeCreated, setEmployeeCreated] = useState(false);
+  const [openModal, setOpenModal] = useState(false)
   const dispatch = useDispatch();
 
   const submitHandler = (data: Employee) => {
@@ -25,12 +26,16 @@ const Home: React.FC<HomeProps> = () => {
       };
     
       dispatch(setEmployee(formattedData));
-      setEmployeeCreated(true);
+      setOpenModal(true)
     }
     catch(error){
       console.log(error)
     }
   };
+
+  const closeModal = () => {
+    setOpenModal(false)
+  }
   
 
   const options = [
@@ -51,7 +56,9 @@ const Home: React.FC<HomeProps> = () => {
 
   return (
     <>
-      <div className="title">
+    <ValidationModal isOpen={openModal} closeModal={closeModal} />
+    <div className={`${openModal ? 'blur-background' : ''}`}>
+      <div className="title"> 
         <h1>HRnet</h1>
       </div>
       <div className="container">
@@ -166,13 +173,8 @@ const Home: React.FC<HomeProps> = () => {
 
           <button type="submit" className="save-btn">Save</button>
         </form>
-
-        {employeeCreated && (
-          <div id="confirmation" className="modal">
-            Employee Created!
-          </div>
-        )}
       </div>
+    </div>
     </>
   );
 };
