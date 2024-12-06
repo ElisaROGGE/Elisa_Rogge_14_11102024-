@@ -8,7 +8,7 @@ import SelectEmployee from "../../Select";
 import { states } from "../../../utils/states";
 import { useDispatch } from "react-redux";
 import { Employee, setEmployee } from "../../../store/employeeSlice";
-import ValidationModal from "../../Modals/ValidationModal";
+import ValidationModal  from "oc-modal-plugin/src/lib/ValidationModal";
 
 interface HomeProps {}
 
@@ -56,8 +56,8 @@ const Home: React.FC<HomeProps> = () => {
 
   return (
     <>
-    <ValidationModal isOpen={openModal} closeModal={closeModal} />
-    <div className={`${openModal ? 'blur-background' : ''}`}>
+    <ValidationModal title="Success !" children="Employee created!" buttonText="Close" isOpen={openModal} closeModal={closeModal} />
+    <div className={`${openModal ? 'dark-overlay' : ''}`}>
       <div className="title"> 
         <h1>HRnet</h1>
       </div>
