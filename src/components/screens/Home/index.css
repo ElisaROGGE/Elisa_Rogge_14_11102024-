@@ -103,6 +103,5 @@ legend {
 }
 .dark-overlay {
     background-color: rgba(0, 0, 0, 0.4);
-    transition: background-color 0.3s ease;
     pointer-events: none; 
   }
