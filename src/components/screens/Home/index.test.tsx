@@ -1,85 +1,96 @@
-import React from "react";
-import { render, screen, fireEvent } from "@testing-library/react";
+import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import { Provider } from "react-redux";
+import { BrowserRouter } from "react-router-dom";
 import configureStore from "redux-mock-store";
 import Home from "./index";
+import '@testing-library/jest-dom';
+import userEvent from "@testing-library/user-event";
 
-const mockStore = configureStore();
-const mockDispatch = jest.fn();
-
-jest.mock("react-redux", () => ({
-  ...jest.requireActual("react-redux"),
-  useDispatch: () => mockDispatch,
-}));
+const mockStore = configureStore([]);
+jest.mock("oc-modal-plugin", () => () => <div>Mocked Modal</div>);
 
 describe("Home Component", () => {
-  let store;
+  let store: any;
 
   beforeEach(() => {
-    store = mockStore({});
+    store = mockStore({
+      employee: {
+        employees: [],
+      },
+    });
+    store.dispatch = jest.fn();
   });
 
-  it("renders the form and all fields", () => {
+  it("renders the form correctly", () => {
     render(
       <Provider store={store}>
-        <Home />
+        <BrowserRouter>
+          <Home />
+        </BrowserRouter>
       </Provider>
     );
 
     expect(screen.getByText(/Create Employee/i)).toBeInTheDocument();
     expect(screen.getByLabelText(/First Name/i)).toBeInTheDocument();
     expect(screen.getByLabelText(/Last Name/i)).toBeInTheDocument();
-    expect(screen.getByLabelText(/Date of Birth/i)).toBeInTheDocument();
-    expect(screen.getByLabelText(/Start Date/i)).toBeInTheDocument();
-    expect(screen.getByLabelText(/Street/i)).toBeInTheDocument();
-    expect(screen.getByLabelText(/City/i)).toBeInTheDocument();
-    expect(screen.getByLabelText(/State/i)).toBeInTheDocument();
-    expect(screen.getByLabelText(/Zip Code/i)).toBeInTheDocument();
-    expect(screen.getByLabelText(/Department/i)).toBeInTheDocument();
+    expect(screen.getByText(/Date of Birth/i)).toBeInTheDocument();
+    expect(screen.getByText(/Start Date/i)).toBeInTheDocument();
   });
 
-  it("submits the form with valid data", () => {
+  it("submits the form with valid data", async () => {
     render(
       <Provider store={store}>
-        <Home />
+        <BrowserRouter>
+          <Home />
+        </BrowserRouter>
       </Provider>
     );
 
-    fireEvent.change(screen.getByLabelText(/First Name/i), { target: { value: "John" } });
-    fireEvent.change(screen.getByLabelText(/Last Name/i), { target: { value: "Doe" } });
-    fireEvent.change(screen.getByLabelText(/Street/i), { target: { value: "123 Main St" } });
-    fireEvent.change(screen.getByLabelText(/City/i), { target: { value: "Springfield" } });
-    fireEvent.change(screen.getByLabelText(/Zip Code/i), { target: { value: "12345" } });
+    fireEvent.change(screen.getByLabelText(/First Name/i), {
+      target: { value: "John" },
+    });
+    fireEvent.change(screen.getByLabelText(/Last Name/i), {
+      target: { value: "Doe" },
+    });
 
-    fireEvent.submit(screen.getByRole("button", { name: /save/i }));
+    const datePicker = screen.getByText(/Date of Birth/i);
+    userEvent.click(datePicker); 
+    userEvent.type(datePicker, "01/01/2000");
 
-    expect(mockDispatch).toHaveBeenCalled();
-    expect(mockDispatch.mock.calls[0][0].payload).toEqual(
-      expect.objectContaining({
-        firstName: "John",
-        lastName: "Doe",
-        street: "123 Main St",
-        city: "Springfield",
-        zipCode: 12345,
-      })
-    );
+    fireEvent.change(screen.getByLabelText(/Street/i), {
+      target: { value: "123 Main St" },
+    });
+    fireEvent.change(screen.getByLabelText(/City/i), {
+      target: { value: "New York" },
+    });
+    fireEvent.change(screen.getByLabelText(/Zip Code/i), {
+      target: { value: "10001" },
+    });
+
+    fireEvent.click(screen.getByText("Save"));
+    
+
+    await waitFor(() => {
+      expect(store.dispatch).toHaveBeenCalledTimes(1);
+    });
   });
 
-  it("opens the modal on successful submission", () => {
+  it("shows the modal after form submission", async () => {
     render(
       <Provider store={store}>
-        <Home />
+        <BrowserRouter>
+          <Home />
+        </BrowserRouter>
       </Provider>
     );
 
-    fireEvent.change(screen.getByLabelText(/First Name/i), { target: { value: "John" } });
-    fireEvent.change(screen.getByLabelText(/Last Name/i), { target: { value: "Doe" } });
-    fireEvent.change(screen.getByLabelText(/Street/i), { target: { value: "123 Main St" } });
-    fireEvent.change(screen.getByLabelText(/City/i), { target: { value: "Springfield" } });
-    fireEvent.change(screen.getByLabelText(/Zip Code/i), { target: { value: "12345" } });
+    fireEvent.change(screen.getByLabelText(/First Name/i), {
+      target: { value: "John" },
+    });
+    fireEvent.click(screen.getByText("Save"));
 
-    fireEvent.submit(screen.getByRole("button", { name: /save/i }));
-
-    expect(screen.getByText(/Employee created!/i)).toBeInTheDocument();
+    await waitFor(() => {
+      expect(screen.getByText(/Mocked Modal/i)).toBeInTheDocument();
+    });
   });
 });

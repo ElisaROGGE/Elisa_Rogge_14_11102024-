@@ -10,9 +10,7 @@ import { useDispatch } from "react-redux";
 import { Employee, setEmployee } from "../../../store/employeeSlice";
 import ValidationModal  from "oc-modal-plugin";
 
-interface HomeProps {}
-
-const Home: React.FC<HomeProps> = () => {
+const Home: React.FC = () => {
   const { register, handleSubmit, control } = useForm();
   const [openModal, setOpenModal] = useState(false)
   const dispatch = useDispatch();
@@ -91,11 +89,12 @@ const Home: React.FC<HomeProps> = () => {
             render={({ field: { onChange, value } }) => (
               <DatePicker
                 selected={value}
-                onChange={(date) => onChange(date)} 
+                onChange={(date: Date) => onChange(date)} 
                 dateFormat="dd/MM/yyyy"
                 showMonthDropdown
                 showYearDropdown
                 dropdownMode="select"
+                aria-labelledby="date-of-birth"
               />
             )}
           />
@@ -108,7 +107,7 @@ const Home: React.FC<HomeProps> = () => {
             render={({ field: { onChange, value } }) => (
               <DatePicker
                 selected={value}
-                onChange={(date) => onChange(date)} 
+                onChange={(date: Date) => onChange(date)} 
                 dateFormat="dd/MM/yyyy"
                 showMonthDropdown
                 showYearDropdown
