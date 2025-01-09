@@ -11,7 +11,7 @@ import { Employee, setEmployee } from "../../../store/employeeSlice";
 import ValidationModal  from "oc-modal-plugin";
 
 const Home: React.FC = () => {
-  const { register, handleSubmit, control } = useForm<Employee>();
+  const { register, handleSubmit, control, formState: { errors } } = useForm<Employee>();
   const [openModal, setOpenModal] = useState(false)
   const dispatch = useDispatch();
 
@@ -71,33 +71,49 @@ const Home: React.FC = () => {
           <input 
             type="text" 
             id="first-name" 
-            {...register("firstName", { required: true })} 
+            {...register("firstName", { required: "First name is required" })} 
           />
+          {errors.firstName && <p className="error-message">{errors.firstName.message}</p>}
+
 
           <label htmlFor="last-name">Last Name</label>
           <input 
             type="text" 
             id="last-name" 
-            {...register("lastName", { required: true })} 
+            {...register("lastName", { required: "Last name is required" })} 
           />
+          {errors.lastName && <p className="error-message">{errors.lastName.message}</p>}
 
           <label htmlFor="date-of-birth">Date of Birth</label>
           <Controller
-            control={control}
-            name="dateOfBirth"
-            defaultValue={new Date()}
-            render={({ field: { onChange, value } }) => (
-              <DatePicker
-                selected={value}
-                onChange={(date: Date | null) => onChange(date)} 
-                dateFormat="dd/MM/yyyy"
-                showMonthDropdown
-                showYearDropdown
-                dropdownMode="select"
-                aria-labelledby="date-of-birth"
-              />
-            )}
-          />
+              control={control}
+              name="dateOfBirth"
+              rules={{
+                required: "Date of birth is required",
+                validate: (value) => {
+                  const today = new Date();
+                  const birthDate = new Date(value);
+                  const age = today.getFullYear() - birthDate.getFullYear();
+                  const isOldEnough =
+                    age > 18 || (age === 18 && today >= new Date(birthDate.setFullYear(birthDate.getFullYear() + 18)));
+                  return isOldEnough || "You must be at least 18 years old";
+                },
+              }}
+              render={({ field: { onChange, value }, fieldState: { error } }) => (
+                <>
+                  <DatePicker
+                    selected={value}
+                    onChange={(date: Date | null) => onChange(date)} 
+                    dateFormat="dd/MM/yyyy"
+                    showMonthDropdown
+                    showYearDropdown
+                    dropdownMode="select"
+                    aria-labelledby="date-of-birth"
+                  />
+                  {error && <p className="error-message">{error.message}</p>}
+                </>
+              )}
+            />
 
           <label htmlFor="start-date">Start Date</label>
           <Controller
@@ -123,15 +139,17 @@ const Home: React.FC = () => {
             <input 
               id="street" 
               type="text" 
-              {...register("street", { required: true })} 
+              {...register("street", { required: "Street is required" })} 
             />
+            {errors.street && <p className="error-message">{errors.street.message}</p>}
 
             <label htmlFor="city">City</label>
             <input 
               id="city" 
               type="text" 
-              {...register("city", { required: true })} 
+              {...register("city", { required: "City is required" })} 
             />
+            {errors.city && <p className="error-message">{errors.city.message}</p>}
 
             <label htmlFor="state">State</label>
             <Controller
@@ -151,8 +169,12 @@ const Home: React.FC = () => {
             <input 
               id="zip-code" 
               type="number" 
-              {...register("zipCode", { required: true })} 
+              {...register("zipCode", { 
+                required: "Zip code is required", 
+                minLength: { value: 5, message: "Zip code must be 5 digits" } 
+              })} 
             />
+            {errors.zipCode && <p className="error-message">{errors.zipCode.message}</p>}
           </fieldset>
 
           <label htmlFor="department">Department</label>

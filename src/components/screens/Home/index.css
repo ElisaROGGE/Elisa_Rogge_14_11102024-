@@ -104,4 +104,9 @@ legend {
 .dark-overlay {
     background-color: rgba(0, 0, 0, 0.4);
     pointer-events: none; 
-  }
+}
+.error-message {
+    color: red;
+    font-size: 0.9rem;
+    margin-top: 5px;
+}
