@@ -16,8 +16,7 @@
     background-color: #f9f9f9;
     border-radius: 8px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    margin-right: 10rem;
-    margin-left: 10rem;
+    width: 100%;
 }
 
 label {
@@ -109,4 +108,9 @@ legend {
     color: red;
     font-size: 0.9rem;
     margin-top: 5px;
+}
+@media (max-width: 480px){
+    .container{
+        padding: 0;
+    }
 }
