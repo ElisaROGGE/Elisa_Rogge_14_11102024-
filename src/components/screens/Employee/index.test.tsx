@@ -4,6 +4,7 @@ import { BrowserRouter as Router } from "react-router-dom";
 import configureStore from "redux-mock-store";
 import EmployeeList from "./index";
 import "@testing-library/jest-dom";
+import { Store } from "@reduxjs/toolkit";
 
 const mockStore = configureStore([]);
 const mockData = [
@@ -32,7 +33,7 @@ const mockData = [
 ];
 
 describe("EmployeeList Component", () => {
-  let store;
+  let store: Store;
 
   beforeEach(() => {
     store = mockStore({

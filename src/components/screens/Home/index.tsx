@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
-import { Controller, useForm } from "react-hook-form";
+import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import './index.css'
@@ -11,11 +11,11 @@ import { Employee, setEmployee } from "../../../store/employeeSlice";
 import ValidationModal  from "oc-modal-plugin";
 
 const Home: React.FC = () => {
-  const { register, handleSubmit, control } = useForm();
+  const { register, handleSubmit, control } = useForm<Employee>();
   const [openModal, setOpenModal] = useState(false)
   const dispatch = useDispatch();
 
-  const submitHandler = (data: Employee) => {
+  const submitHandler: SubmitHandler<Employee> = (data: Employee) => {
     try{
       const formattedData = {
         ...data,
@@ -89,7 +89,7 @@ const Home: React.FC = () => {
             render={({ field: { onChange, value } }) => (
               <DatePicker
                 selected={value}
-                onChange={(date: Date) => onChange(date)} 
+                onChange={(date: Date | null) => onChange(date)} 
                 dateFormat="dd/MM/yyyy"
                 showMonthDropdown
                 showYearDropdown
@@ -107,7 +107,7 @@ const Home: React.FC = () => {
             render={({ field: { onChange, value } }) => (
               <DatePicker
                 selected={value}
-                onChange={(date: Date) => onChange(date)} 
+                onChange={(date: Date | null) => onChange(date)} 
                 dateFormat="dd/MM/yyyy"
                 showMonthDropdown
                 showYearDropdown
