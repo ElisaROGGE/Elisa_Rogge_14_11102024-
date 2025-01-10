@@ -19,8 +19,8 @@ const Home: React.FC = () => {
     try{
       const formattedData = {
         ...data,
-        dateOfBirth: data.dateOfBirth.toLocaleDateString("fr-FR"),
-        startDate: data.startDate.toLocaleDateString("fr-FR"),
+        dateOfBirth: data.dateOfBirth.toLocaleDateString("en-EN"),
+        startDate: data.startDate.toLocaleDateString("en-EN"),
       };
     
       dispatch(setEmployee(formattedData));
@@ -104,7 +104,7 @@ const Home: React.FC = () => {
                   <DatePicker
                     selected={value}
                     onChange={(date: Date | null) => onChange(date)} 
-                    dateFormat="dd/MM/yyyy"
+                    dateFormat="MM/dd/yyyy"
                     showMonthDropdown
                     showYearDropdown
                     dropdownMode="select"
@@ -124,7 +124,7 @@ const Home: React.FC = () => {
               <DatePicker
                 selected={value}
                 onChange={(date: Date | null) => onChange(date)} 
-                dateFormat="dd/MM/yyyy"
+                dateFormat="MM/dd/yyyy"
                 showMonthDropdown
                 showYearDropdown
                 dropdownMode="select"

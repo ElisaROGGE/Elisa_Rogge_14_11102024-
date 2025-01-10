@@ -17,6 +17,7 @@ interface EmployeeProps {}
 
 const EmployeeList: React.FC<EmployeeProps> = () => {
   const data = useSelector((state: { employees: Employee[] }) => state.employees);
+  console.log({data})
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [pagination, setPagination] = React.useState<PaginationState>({
     pageIndex: 0,
